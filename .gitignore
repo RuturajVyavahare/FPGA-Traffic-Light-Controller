@@ -1,0 +1,22 @@
+# Simulation output
+Simulation/final_sim
+
+# Vivado generated files
+.vivado/
+*.jou
+*.log
+*.str
+*.wdb
+*.pb
+*.cache/
+*.runs/
+*.gen/
+*.hw/
+*.ip_user_files/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
