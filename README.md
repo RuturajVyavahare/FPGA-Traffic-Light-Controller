@@ -1,6 +1,6 @@
 # FPGA-Based Traffic Light Controller with Priority System
 
-A four-way traffic light controller designed using **Verilog HDL, Finite State Machine (FSM) architecture, and FPGA implementation**. The project implements normal traffic sequencing and manual emergency vehicle prioritization, targeting the **Digilent Basys 3 development board featuring the AMD/Xilinx Artix-7 FPGA**.
+A four-way traffic light controller designed using **Verilog HDL, Finite State Machine (FSM) architecture, and FPGA implementation**. The project supports normal traffic sequencing and manual emergency vehicle prioritization, targeting the **Digilent Basys 3 development board featuring the AMD/Xilinx Artix-7 FPGA**.
 
 > **Project Status:** RTL design, simulation, Vivado design analysis, Basys 3 FPGA hardware implementation, and physical testing completed successfully.
 
@@ -29,7 +29,7 @@ The system controls traffic signals at a four-way intersection using a finite st
 
 When an emergency request is handled, the controller follows an all-red safety phase before activating the selected emergency direction. If multiple emergency requests are present, the controller applies a fixed priority order.
 
-The design was simulated and analyzed in AMD/Xilinx Vivado, implemented on the Basys 3 FPGA board, and physically tested.
+The design was simulated and analyzed using AMD/Xilinx Vivado, implemented on the Basys 3 FPGA board, and physically tested.
 
 ## Objectives
 
@@ -70,7 +70,7 @@ During normal operation, the controller follows this repeating sequence:
 | 6 | Red | Red |
 | 7 | Repeat | Repeat |
 
-The all-red phase provides an interval between conflicting traffic movements.
+The all-red phase provides a safety interval between conflicting traffic movements.
 
 ## Emergency Priority System
 
@@ -88,21 +88,21 @@ The priority order is:
 3. East
 4. West
 
-When an emergency request is serviced, the controller transitions through the designated all-red safety phase before granting green to the selected emergency direction. Emergency requests are handled at designated all-red transitions rather than by immediate, arbitrary preemption.
+When an emergency request is serviced, the controller transitions through the designated all-red safety phase before granting green to the selected emergency direction. Emergency requests are handled at designated all-red transitions rather than through immediate, arbitrary preemption.
 
 **Note:** Emergency requests are manually provided through input signals. The project does not include physical vehicle-detection sensors.
 
 ## System Architecture
 
-The project is organized around the following functional elements:
+The project contains the following functional modules:
 
 - **Priority Encoder:** Determines the highest-priority emergency request.
 - **Timer:** A separate timer module is included in the RTL project structure.
-- **Traffic Controller:** Manages the traffic states, normal sequence, emergency handling, and signal outputs.
+- **Traffic Controller:** Manages traffic states, the normal sequence, emergency handling, and signal outputs.
 - **Top Module:** Connects the controller to the external clock, reset, emergency inputs, and traffic signal outputs.
-- **Testbench:** Applies test inputs and observes the RTL behavior during simulation.
+- **Testbench:** Applies test inputs and observes RTL behavior during simulation.
 
-The exact module connections should follow the current RTL implementation.
+The exact module connections and responsibilities should be verified against the current RTL source files.
 
 ### Design and Simulation Screenshots
 
@@ -188,13 +188,12 @@ FPGA-Traffic-Light-Controller/
     ├── simulation_waveform.png
     ├── vivado_simulation_waveform.png
     ├── vivado_rtl_schematic.png
-    ├── vivado_synthesis_schematic.png
     └── vivado_implementation_schematic.png
 ```
 
 ## Simulation and Verification
 
-The RTL design includes a testbench for exercising the traffic controller.
+The RTL project includes a testbench for exercising the traffic controller.
 
 ### Simulating with Vivado
 
@@ -203,7 +202,7 @@ The RTL design includes a testbench for exercising the traffic controller.
 3. Add `Testbench/traffic_controller_tb.v` as a simulation source.
 4. Set the correct testbench as the simulation top.
 5. Run behavioral simulation.
-6. Observe the traffic signals and emergency request behavior in the waveform.
+6. Observe traffic signals and emergency request behavior in the waveform.
 7. Review the expected state transitions and timing.
 
 ### Optional Command-Line Simulation
@@ -220,7 +219,7 @@ Run the compiled simulation:
 vvp Simulation/final_sim
 ```
 
-If the testbench uses additional modules, include those RTL files in the compilation command. Confirm the actual module dependencies before using this command.
+If the testbench uses additional modules, include those RTL files in the compilation command. Verify the actual module dependencies before using this command.
 
 ## FPGA Implementation
 
@@ -245,7 +244,7 @@ The main board constraint file is:
 
 `FPGA/constraints/Basys3_Traffic.xdc`
 
-The generated implementation constraint file is retained for reference. The main board constraints should be used as appropriate for the Vivado project.
+The generated implementation constraint file is retained for reference. Use the main board constraints as appropriate for the Vivado project.
 
 ## Hardware Demonstration
 
@@ -275,15 +274,15 @@ The intended timing configuration is:
 | `ALL_RED_TIME` | 1 second | All-red safety phase |
 | `EMERGENCY_TIME` | 10 seconds | Emergency green phase |
 
-These values describe the intended design configuration. Verify the parameter values in the current RTL before changing the design or regenerating the bitstream.
+These values describe the intended configuration. Verify the parameter values in the current RTL before changing the design or regenerating the bitstream.
 
 ## Results
 
-The project covers the RTL design, simulation, Vivado design analysis, FPGA implementation, and physical hardware testing of a four-way traffic light controller.
+The project covers RTL design, simulation, Vivado design analysis, FPGA implementation, and physical hardware testing of a four-way traffic light controller.
 
-The implemented design demonstrates normal traffic sequencing and a manual emergency request mechanism with fixed priority and an all-red safety transition.
+The design demonstrates normal traffic sequencing and a manual emergency request mechanism with fixed priority and an all-red safety transition.
 
-The repository includes the RTL source code, testbench, simulation waveform, FPGA constraints, generated bitstream, design screenshots, and hardware photographs.
+The repository includes RTL source code, a testbench, simulation waveform, FPGA constraints, a generated bitstream, design screenshots, and hardware photographs.
 
 ## Future Improvements
 
@@ -300,9 +299,8 @@ The repository includes the RTL source code, testbench, simulation waveform, FPG
 
 Electronics and Telecommunication Engineering
 
-GitHub: [RuturajVyavahare](https://github.com/RuturajVyavahare)
-
-LinkedIn: [Ruturaj Vyavahare](https://www.linkedin.com/in/ruturaj-vyavahare)
+- GitHub: [RuturajVyavahare](https://github.com/RuturajVyavahare)
+- LinkedIn: [Ruturaj Vyavahare](https://www.linkedin.com/in/ruturaj-vyavahare)
 
 ## License
 
