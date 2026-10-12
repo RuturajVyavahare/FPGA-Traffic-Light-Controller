@@ -1,166 +1,160 @@
 # FPGA-Based Traffic Light Controller with Priority System
 
-A four-way traffic light controller designed using **Verilog HDL, finite state machine (FSM) architecture, and FPGA implementation**. The project supports normal traffic sequencing and manual emergency vehicle priority, targeting the Digilent Basys 3 development board featuring the AMD/Xilinx Artix-7 FPGA.
+A four-way traffic light controller designed using **Verilog HDL, Finite State Machine (FSM) architecture, and FPGA implementation**. The project implements normal traffic sequencing and manual emergency vehicle prioritization, targeting the **Digilent Basys 3 development board featuring the AMD/Xilinx Artix-7 FPGA**.
+
+> **Project Status:** RTL design, simulation, Vivado design analysis, Basys 3 FPGA hardware implementation, and physical testing completed successfully.
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Objectives](#objectives)
+- [Features](#features)
+- [Traffic Control Sequence](#traffic-control-sequence)
+- [Emergency Priority System](#emergency-priority-system)
+- [System Architecture](#system-architecture)
+- [Hardware and Software Requirements](#hardware-and-software-requirements)
+- [Project Structure](#project-structure)
+- [Simulation and Verification](#simulation-and-verification)
+- [FPGA Implementation](#fpga-implementation)
+- [Hardware Demonstration](#hardware-demonstration)
+- [Timing Parameters](#timing-parameters)
+- [Results](#results)
+- [Future Improvements](#future-improvements)
+- [Author](#author)
+- [License](#license)
 
 ## Project Overview
 
-This project implements a traffic light controller for a four-way intersection consisting of North, South, East, and West directions. The controller manages traffic signals using an FSM, generates timing intervals from the FPGA clock, and handles emergency requests according to a fixed priority order.
+The system controls traffic signals at a four-way intersection using a finite state machine implemented in Verilog HDL. It supports a predefined traffic sequence and accepts manual emergency requests for North, South, East, and West directions.
 
-The design includes Verilog RTL, a testbench, simulation waveforms, Vivado design-analysis screenshots, Basys 3 pin constraints, and a generated FPGA bitstream.
+When an emergency request is handled, the controller follows an all-red safety phase before activating the selected emergency direction. If multiple emergency requests are present, the controller applies a fixed priority order.
 
-## Key Features
+The design was simulated and analyzed in AMD/Xilinx Vivado, implemented on the Basys 3 FPGA board, and physically tested.
 
-- Four-way traffic signal control.
-- FSM-based RTL architecture.
-- Internal one-second timing generation.
-- Configurable green, yellow, all-red, and emergency timings.
-- Manual emergency request inputs for all four directions.
-- Emergency priority: **North > South > East > West**.
-- ALL-RED transitions before emergency green.
-- Handling of simultaneous emergency requests.
-- Verilog testbench and simulation waveform.
-- Vivado RTL, synthesis, and implementation analysis.
-- Basys 3 XDC constraints and bitstream.
-- Physical hardware implementation photographs.
+## Objectives
 
-## Hardware and Tools
+- Design a four-way traffic light controller using Verilog HDL.
+- Implement the controller using finite state machine architecture.
+- Generate the normal traffic sequence with configurable timing.
+- Implement manual emergency vehicle request inputs.
+- Apply a fixed priority order for simultaneous emergency requests.
+- Simulate and verify the RTL design.
+- Perform RTL analysis, synthesis, and implementation using Vivado.
+- Implement and test the design on the Digilent Basys 3 FPGA board.
 
-| Component | Specification |
-|---|---|
-| FPGA board | Digilent Basys 3 |
-| FPGA device | AMD/Xilinx Artix-7 XC7A35T-1CPG236C |
-| System clock | 100 MHz |
-| Hardware description language | Verilog HDL |
-| FPGA design tool | AMD/Xilinx Vivado |
-| Simulation | Icarus Verilog |
-| Waveform viewer | GTKWave |
-| Version control | Git and GitHub |
+## Features
 
-## System Architecture
+- Four-way traffic signal control: North, South, East, and West.
+- FSM-based traffic sequencing.
+- Normal green, yellow, and all-red phases.
+- Manual emergency request inputs.
+- Fixed emergency priority: North > South > East > West.
+- All-red safety phase before emergency green.
+- Parameterized timing configuration.
+- Verilog RTL design and testbench.
+- Vivado simulation and design analysis.
+- Basys 3 FPGA hardware implementation.
+- Physical hardware testing.
 
-The design consists of the following functional blocks:
+## Traffic Control Sequence
 
-1. **Timing logic:** Generates one-second timing events from the FPGA clock.
-2. **Traffic controller FSM:** Controls normal traffic sequencing and emergency states.
-3. **Emergency priority logic:** Selects the highest-priority active emergency request.
-4. **Traffic signal outputs:** Drive the red, yellow, and green indicators for each direction.
-5. **FPGA interface:** Connects the controller to the Basys 3 clock, reset, switches, and LEDs through the XDC constraints.
+During normal operation, the controller follows this repeating sequence:
 
-## Normal Traffic Sequence
+| Step | North–South Signals | East–West Signals |
+|---|---|---|
+| 1 | Green | Red |
+| 2 | Yellow | Red |
+| 3 | Red | Red |
+| 4 | Red | Green |
+| 5 | Red | Yellow |
+| 6 | Red | Red |
+| 7 | Repeat | Repeat |
 
-The controller follows this repeating sequence:
-
-1. North and South GREEN; East and West RED.
-2. North and South YELLOW; East and West RED.
-3. ALL RED.
-4. East and West GREEN; North and South RED.
-5. East and West YELLOW; North and South RED.
-6. ALL RED.
-7. Repeat.
-
-The all-red intervals separate conflicting traffic movements.
+The all-red phase provides an interval between conflicting traffic movements.
 
 ## Emergency Priority System
 
 The controller accepts four manual emergency request inputs:
 
-| Input | Direction |
-|---|---|
-| `emergency_north` | North |
-| `emergency_south` | South |
-| `emergency_east` | East |
-| `emergency_west` | West |
+- `emergency_north`
+- `emergency_south`
+- `emergency_east`
+- `emergency_west`
 
 The priority order is:
 
-**North > South > East > West**
+1. North
+2. South
+3. East
+4. West
 
-When an emergency request is selected at a designated transition point, the controller enters the corresponding emergency sequence. If multiple requests are active, the highest-priority request is selected. All-red transitions are used before granting emergency green.
+When an emergency request is serviced, the controller transitions through the designated all-red safety phase before granting green to the selected emergency direction. Emergency requests are handled at designated all-red transitions rather than by immediate, arbitrary preemption.
 
-Emergency requests are represented by FPGA input signals. Physical emergency vehicle detection sensors are not included in this version.
+**Note:** Emergency requests are manually provided through input signals. The project does not include physical vehicle-detection sensors.
 
-## Timing Configuration
+## System Architecture
 
-The intended default parameters are:
+The project is organized around the following functional elements:
 
-| Parameter | Value |
-|---|---:|
-| `CLK_FREQ` | 100,000,000 Hz |
-| `GREEN_TIME` | 10 seconds |
-| `YELLOW_TIME` | 3 seconds |
-| `ALL_RED_TIME` | 1 second |
-| `EMERGENCY_TIME` | 10 seconds |
+- **Priority Encoder:** Determines the highest-priority emergency request.
+- **Timer:** A separate timer module is included in the RTL project structure.
+- **Traffic Controller:** Manages the traffic states, normal sequence, emergency handling, and signal outputs.
+- **Top Module:** Connects the controller to the external clock, reset, emergency inputs, and traffic signal outputs.
+- **Testbench:** Applies test inputs and observes the RTL behavior during simulation.
 
-These parameters are defined in the RTL design and can be adjusted for supported configurations.
+The exact module connections should follow the current RTL implementation.
 
-## Hardware Implementation
+### Design and Simulation Screenshots
 
-The project targets the Digilent Basys 3 FPGA development board.
+#### Block Diagram
 
-The intended board interface uses:
+![Traffic Controller Block Diagram](Documentation/Block_Diagram.png)
 
-- The onboard 100 MHz clock.
-- A push button for reset.
-- Four slide switches for emergency requests.
-- LEDs for traffic signal outputs.
+#### FSM Diagram
 
-The XDC file defines FPGA pin assignments and I/O standards. The generated bitstream can be used to configure the FPGA with the corresponding implemented design.
+![Traffic Controller FSM Diagram](Documentation/FSM_Diagram.png)
 
-### Hardware Photographs
-
-![Basys 3 hardware implementation](FPGA/hardware/hardware_implementation.jpeg)
-
-![Basys 3 hardware implementation - photo 2](FPGA/hardware/hardware_implementation01.jpeg)
-
-![Basys 3 hardware implementation - photo 3](FPGA/hardware/hardware_implementation02.jpeg)
-
-## Simulation and Verification
-
-The repository includes a Verilog testbench and simulation waveform for examining controller behavior.
-
-The test scenarios cover:
-
-- Normal traffic sequencing.
-- North emergency request.
-- South emergency request.
-- East emergency request.
-- West emergency request.
-- North-versus-East priority.
-- South-versus-East-versus-West priority.
-
-The testbench and waveform provide evidence for examining FSM transitions, signal outputs, and emergency priority behavior.
-
-## Vivado Design Analysis
-
-The repository includes diagrams, simulation waveforms, and Vivado design-analysis screenshots.
-
-### FSM Diagram
-
-![FSM Diagram](Documentation/FSM_Diagram.png)
-
-### Block Diagram
-
-![Block Diagram](Documentation/Block_Diagram.png)
-
-### Simulation Waveform
+#### Simulation Waveform
 
 ![Simulation Waveform](Documentation/simulation_waveform.png)
 
-### Vivado Simulation
+#### Vivado Simulation Waveform
 
 ![Vivado Simulation Waveform](Documentation/vivado_simulation_waveform.png)
 
-### RTL Schematic
+#### Vivado RTL Schematic
 
-![RTL Schematic](Documentation/vivado_rtl_schematic.png)
+![Vivado RTL Schematic](Documentation/vivado_rtl_schematic.png)
 
-### Synthesis Schematic
+#### Vivado Synthesis Schematic
 
-![Synthesis Schematic](Documentation/vivado_synthesis_schematic.png)
+![Vivado Synthesis Schematic](Documentation/vivado_synthesis_schematic.png)
 
-### Implementation Schematic
+#### Vivado Implementation Schematic
 
-![Implementation Schematic](Documentation/vivado_implementation_schematic.png)
+![Vivado Implementation Schematic](Documentation/vivado_implementation_schematic.png)
+
+## Hardware and Software Requirements
+
+### Hardware
+
+| Component | Specification |
+|---|---|
+| FPGA development board | Digilent Basys 3 |
+| FPGA device | AMD/Xilinx Artix-7 XC7A35T-1CPG236C |
+| Clock source | 100 MHz onboard clock |
+| Traffic signal outputs | Red, yellow, and green signals for four directions |
+| Emergency inputs | Four manual request signals |
+
+### Software
+
+| Tool | Purpose |
+|---|---|
+| Verilog HDL | RTL design |
+| AMD/Xilinx Vivado | Simulation, synthesis, implementation, and bitstream generation |
+| Icarus Verilog | Optional command-line RTL simulation |
+| GTKWave | Optional waveform viewing |
+| Git and GitHub | Version control and project hosting |
 
 ## Project Structure
 
@@ -169,29 +163,25 @@ FPGA-Traffic-Light-Controller/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
-│
 ├── RTL/
 │   ├── priority_encoder.v
 │   ├── timer.v
 │   ├── top_module.v
 │   └── traffic_controller.v
-│
 ├── Testbench/
 │   └── traffic_controller_tb.v
-│
 ├── Simulation/
 │   └── final_traffic_controller.vcd
-│
 ├── FPGA/
 │   ├── constraints/
-│   │   └── Basys3_Traffic.xdc
+│   │   ├── Basys3_Traffic.xdc
+│   │   └── traffic_controller_propImpl.xdc
 │   ├── bitstream/
 │   │   └── traffic_controller.bit
 │   └── hardware/
 │       ├── hardware_implementation.jpeg
 │       ├── hardware_implementation01.jpeg
 │       └── hardware_implementation02.jpeg
-│
 └── Documentation/
     ├── Block_Diagram.png
     ├── FSM_Diagram.png
@@ -202,78 +192,117 @@ FPGA-Traffic-Light-Controller/
     └── vivado_implementation_schematic.png
 ```
 
-## Running the RTL Simulation
+## Simulation and Verification
 
-Install Icarus Verilog and GTKWave, then open a terminal in the repository root.
+The RTL design includes a testbench for exercising the traffic controller.
 
-Compile the testbench:
+### Simulating with Vivado
+
+1. Create or open the Vivado project.
+2. Add the required RTL source files.
+3. Add `Testbench/traffic_controller_tb.v` as a simulation source.
+4. Set the correct testbench as the simulation top.
+5. Run behavioral simulation.
+6. Observe the traffic signals and emergency request behavior in the waveform.
+7. Review the expected state transitions and timing.
+
+### Optional Command-Line Simulation
+
+If your testbench depends only on `traffic_controller.v`, compile it using:
 
 ```bash
-iverilog -g2012 -s traffic_controller_tb \
--o Simulation/final_sim \
-RTL/traffic_controller.v \
-Testbench/traffic_controller_tb.v
+iverilog -g2012 -s traffic_controller_tb -o Simulation/final_sim RTL/traffic_controller.v Testbench/traffic_controller_tb.v
 ```
 
-Run the simulation:
+Run the compiled simulation:
 
 ```bash
 vvp Simulation/final_sim
 ```
 
-Open the existing waveform:
+If the testbench uses additional modules, include those RTL files in the compilation command. Confirm the actual module dependencies before using this command.
 
-```bash
-gtkwave Simulation/final_traffic_controller.vcd
-```
+## FPGA Implementation
 
-If your testbench or RTL depends on additional modules, include those source files in the compile command.
+The design was implemented using AMD/Xilinx Vivado and targeted to the Digilent Basys 3 FPGA board.
 
-## FPGA Build and Programming
+The implementation workflow consists of:
 
-To reproduce the FPGA build:
+1. Add the RTL source files to the Vivado project.
+2. Set the appropriate top module.
+3. Add the Basys 3 constraint file: `FPGA/constraints/Basys3_Traffic.xdc`.
+4. Run RTL analysis and synthesis.
+5. Run implementation and review the design reports.
+6. Generate the bitstream.
+7. Program the Basys 3 board.
+8. Verify the traffic signal sequence and emergency request behavior on the hardware.
 
-1. Open the project in AMD/Xilinx Vivado.
-2. Add the required Verilog source files.
-3. Set `top_module` as the top module.
-4. Add `FPGA/constraints/Basys3_Traffic.xdc`.
-5. Run RTL elaboration and synthesis.
-6. Run implementation and review timing and design-rule reports.
-7. Generate the bitstream.
-8. Program the Basys 3 and test normal sequencing and emergency priority.
+The generated bitstream is stored at:
 
-The committed bitstream should correspond to the committed RTL and XDC files.
+`FPGA/bitstream/traffic_controller.bit`
 
-## Project Status
+The main board constraint file is:
 
-| Deliverable | Status |
-|---|---|
-| Verilog RTL design | Completed |
-| Testbench and simulation | Completed |
-| Simulation waveform | Included |
-| Vivado design analysis | Documented |
-| Basys 3 constraints | Included |
-| Generated bitstream | Included |
-| Hardware implementation photographs | Included |
-| Project documentation | Updated |
+`FPGA/constraints/Basys3_Traffic.xdc`
+
+The generated implementation constraint file is retained for reference. The main board constraints should be used as appropriate for the Vivado project.
+
+## Hardware Demonstration
+
+The following photographs document the physical FPGA implementation.
+
+### Hardware Implementation — Photo 1
+
+![Basys 3 Traffic Light Controller Hardware 1](FPGA/hardware/hardware_implementation.jpeg)
+
+### Hardware Implementation — Photo 2
+
+![Basys 3 Traffic Light Controller Hardware 2](FPGA/hardware/hardware_implementation01.jpeg)
+
+### Hardware Implementation — Photo 3
+
+![Basys 3 Traffic Light Controller Hardware 3](FPGA/hardware/hardware_implementation02.jpeg)
+
+## Timing Parameters
+
+The intended timing configuration is:
+
+| Parameter | Value | Description |
+|---|---:|---|
+| `CLK_FREQ` | 100,000,000 Hz | Input clock frequency |
+| `GREEN_TIME` | 10 seconds | Normal green phase |
+| `YELLOW_TIME` | 3 seconds | Normal yellow phase |
+| `ALL_RED_TIME` | 1 second | All-red safety phase |
+| `EMERGENCY_TIME` | 10 seconds | Emergency green phase |
+
+These values describe the intended design configuration. Verify the parameter values in the current RTL before changing the design or regenerating the bitstream.
+
+## Results
+
+The project covers the RTL design, simulation, Vivado design analysis, FPGA implementation, and physical hardware testing of a four-way traffic light controller.
+
+The implemented design demonstrates normal traffic sequencing and a manual emergency request mechanism with fixed priority and an all-red safety transition.
+
+The repository includes the RTL source code, testbench, simulation waveform, FPGA constraints, generated bitstream, design screenshots, and hardware photographs.
 
 ## Future Improvements
 
-- Integrate physical emergency vehicle detection sensors.
+- Add physical vehicle detection using suitable sensors.
 - Add pedestrian crossing control.
-- Introduce configurable timings through switches or serial communication.
-- Explore adaptive traffic control based on traffic density.
-- Evaluate further area, timing, and power optimizations.
+- Introduce configurable traffic timing.
+- Explore adaptive traffic sequencing based on traffic density.
+- Evaluate resource utilization, maximum operating frequency, and power consumption.
+- Extend the design to support additional intersections.
 
 ## Author
 
 **Ruturaj Vyavahare**
 
 Electronics and Telecommunication Engineering
-VLSI and FPGA Design
 
-- GitHub: [RuturajVyavahare](https://github.com/RuturajVyavahare)
-- Project Repository: [FPGA-Based Traffic Light Controller](https://github.com/RuturajVyavahare/FPGA-Traffic-Light-Controller)
+GitHub: [RuturajVyavahare](https://github.com/RuturajVyavahare)
+
+LinkedIn: [Ruturaj Vyavahare](https://www.linkedin.com/in/ruturaj-vyavahare)
 
 ## License
 
