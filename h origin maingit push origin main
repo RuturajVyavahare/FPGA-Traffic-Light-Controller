@@ -1,0 +1,312 @@
+[1mdiff --git a/LICENSE b/LICENSE[m
+[1mindex 33c0ffc..b178b5e 100644[m
+[1m--- a/LICENSE[m
+[1m+++ b/LICENSE[m
+[36m@@ -1,285 +1,21 @@[m
+[31m-# FPGA-Based Traffic Light Controller with Priority System[m
+[31m-[m
+[31m-A four-way traffic light controller designed using **Verilog HDL, finite state machine (FSM) architecture, and FPGA implementation**. The project supports normal traffic sequencing and manual emergency vehicle priority, targeting the Digilent Basys 3 development board featuring the AMD/Xilinx Artix-7 FPGA.[m
+[31m-[m
+[31m-**Project Status: RTL design, simulation, Vivado design analysis, Basys 3 implementation, and project documentation completed.**[m
+[31m-[m
+[31m----[m
+[31m-[m
+[31m-## Overview[m
+[31m-[m
+[31m-This project implements a four-way traffic light controller for North, South, East, and West directions. The controller uses an FSM to manage traffic signal transitions, generate timing intervals, and handle emergency requests.[m
+[31m-[m
+[31m-The design was developed in Verilog HDL, simulated using Icarus Verilog, and analyzed using AMD/Xilinx Vivado. The hardware implementation targets the Digilent Basys 3 FPGA board.[m
+[31m-[m
+[31m-## Key Features[m
+[31m-[m
+[31m-- Four-way traffic signal control.[m
+[31m-- FSM-based RTL design.[m
+[31m-- Internal one-second timing generation from the FPGA clock.[m
+[31m-- Configurable green, yellow, all-red, and emergency timings.[m
+[31m-- Manual emergency request inputs for all four directions.[m
+[31m-- Fixed emergency priority: **North > South > East > West**.[m
+[31m-- Safe ALL-RED transitions before emergency green.[m
+[31m-- Handling of multiple simultaneous emergency requests.[m
+[31m-- Verilog testbench and simulation waveform.[m
+[31m-- Vivado RTL, synthesis, and implementation analysis.[m
+[31m-- Basys 3 XDC constraints and generated FPGA bitstream.[m
+[31m-- Hardware implementation evidence.[m
+[31m-[m
+[31m-## Hardware and Tools[m
+[31m-[m
+[31m-| Component | Specification |[m
+[31m-|---|---|[m
+[31m-| FPGA board | Digilent Basys 3 |[m
+[31m-| FPGA device | AMD/Xilinx Artix-7 XC7A35T-1CPG236C |[m
+[31m-| Clock frequency | 100 MHz |[m
+[31m-| HDL | Verilog |[m
+[31m-| FPGA design tool | AMD/Xilinx Vivado |[m
+[31m-| RTL simulation | Icarus Verilog |[m
+[31m-| Waveform viewer | GTKWave |[m
+[31m-| Version control | Git and GitHub |[m
+[31m-[m
+[31m-## System Architecture[m
+[31m-[m
+[31m-The system consists of the following functional components:[m
+[31m-[m
+[31m-1. **Clock and timing logic:** Generates the one-second timing event used by the FSM.[m
+[31m-2. **Traffic controller FSM:** Controls normal traffic sequencing and emergency states.[m
+[31m-3. **Emergency priority logic:** Selects the highest-priority active emergency request.[m
+[31m-4. **Traffic signal outputs:** Drive the red, yellow, and green indicators for all four directions.[m
+[31m-5. **FPGA interface:** Connects the controller to the Basys 3 clock, reset, switches, and LEDs through the XDC constraints.[m
+[31m-[m
+[31m-## Normal Traffic Sequence[m
+[31m-[m
+[31m-The controller follows this repeating sequence:[m
+[31m-[m
+[31m-1. North and South GREEN; East and West RED.[m
+[31m-2. North and South YELLOW; East and West RED.[m
+[31m-3. ALL RED.[m
+[31m-4. East and West GREEN; North and South RED.[m
+[31m-5. East and West YELLOW; North and South RED.[m
+[31m-6. ALL RED.[m
+[31m-7. Repeat.[m
+[31m-[m
+[31m-The all-red intervals separate conflicting traffic movements.[m
+[31m-[m
+[31m-## Emergency Priority System[m
+[31m-[m
+[31m-The controller accepts four manual emergency request inputs:[m
+[31m-[m
+[31m-| Input | Direction |[m
+[31m-|---|---|[m
+[31m-| `emergency_north` | North |[m
+[31m-| `emergency_south` | South |[m
+[31m-| `emergency_east` | East |[m
+[31m-| `emergency_west` | West |[m
+[31m-[m
+[31m-The priority order is:[m
+[31m-[m
+[31m-**North > South > East > West**[m
+[31m-[m
+[31m-When an emergency request is selected at a designated all-red transition, the controller grants the selected direction a green signal while keeping conflicting directions red. Multiple simultaneous requests are resolved according to the fixed priority order.[m
+[31m-[m
+[31m-Emergency requests are represented by FPGA input signals; physical emergency vehicle detection sensors are not part of this version.[m
+[31m-[m
+[31m-## Timing Configuration[m
+[31m-[m
+[31m-The intended default parameters are:[m
+[31m-[m
+[31m-| Parameter | Value |[m
+[31m-|---|---:|[m
+[31m-| `CLK_FREQ` | 100,000,000 Hz |[m
+[31m-| `GREEN_TIME` | 10 seconds |[m
+[31m-| `YELLOW_TIME` | 3 seconds |[m
+[31m-| `ALL_RED_TIME` | 1 second |[m
+[31m-| `EMERGENCY_TIME` | 10 seconds |[m
+[31m-[m
+[31m-These parameters are defined in the RTL design and can be adjusted for supported configurations.[m
+[31m-[m
+[31m-## Hardware Implementation[m
+[31m-[m
+[31m-The controller targets the **Digilent Basys 3 FPGA development board**.[m
+[31m-[m
+[31m-The hardware interface uses:[m
+[31m-[m
+[31m-- The onboard 100 MHz clock.[m
+[31m-- A push button for reset.[m
+[31m-- Four slide switches for emergency requests.[m
+[31m-- LEDs for the traffic signal outputs.[m
+[31m-[m
+[31m-The XDC file defines the FPGA pin assignments and I/O standards. The generated bitstream can be used to configure the FPGA with the corresponding implemented design.[m
+[31m-[m
+[31m-### Hardware Evidence[m
+[31m-[m
+[31m-Add your final Basys 3 photograph to `Documentation/hardware_implementation.png` to display it here:[m
+[31m-[m
+[31m-![Basys 3 hardware implementation](Documentation/hardware_implementation.png)[m
+[31m-[m
+[31m-*Physical FPGA implementation of the traffic light controller.*[m
+[31m-[m
+[31m-## Simulation and Verification[m
+[31m-[m
+[31m-The repository contains the Verilog testbench and simulation waveform used to examine the controller's behavior.[m
+[31m-[m
+[31m-The test scenarios cover:[m
+[31m-[m
+[31m-- Normal traffic sequencing.[m
+[31m-- North emergency request.[m
+[31m-- South emergency request.[m
+[31m-- East emergency request.[m
+[31m-- West emergency request.[m
+[31m-- North-versus-East priority.[m
+[31m-- South-versus-East-versus-West priority.[m
+[31m-[m
+[31m-Simulation waveforms can be examined using GTKWave. The testbench and RTL sources provide the basis for reproducing these tests.[m
+[31m-[m
+[31m-## Vivado Design Analysis[m
+[31m-[m
+[31m-The project documentation includes the FSM and block diagrams, simulation waveforms, and Vivado design-analysis screenshots.[m
+[31m-[m
+[31m-### FSM Diagram[m
+[31m-[m
+[31m-![FSM Diagram](Documentation/FSM_Diagram.png)[m
+[31m-[m
+[31m-### Block Diagram[m
+[31m-[m
+[31m-![Block Diagram](Documentation/Block_Diagram.png)[m
+[31m-[m
+[31m-### Simulation Waveform[m
+[31m-[m
+[31m-![Simulation Waveform](Documentation/simulation_waveform.png)[m
+[31m-[m
+[31m-### Vivado Simulation[m
+[31m-[m
+[31m-![Vivado Simulation Waveform](Documentation/vivado_simulation_waveform.png)[m
+[31m-[m
+[31m-### RTL Schematic[m
+[31m-[m
+[31m-![RTL Schematic](Documentation/vivado_rtl_schematic.png)[m
+[31m-[m
+[31m-### Synthesis Schematic[m
+[31m-[m
+[31m-![Synthesis Schematic](Documentation/vivado_synthesis_schematic.png)[m
+[31m-[m
+[31m-### Implementation Schematic[m
+[31m-[m
+[31m-![Implementation Schematic](Documentation/vivado_implementation_schematic.png)[m
+[31m-[m
+[31m-## Project Structure[m
+[31m-[m
+[31m-```text[m
+[31m-FPGA-Traffic-Light-Controller/[m
+[31m-├── README.md[m
+[31m-├── LICENSE[m
+[31m-├── .gitignore[m
+[31m-│[m
+[31m-├── RTL/[m
+[31m-│   ├── priority_encoder.v[m
+[31m-│   ├── timer.v[m
+[31m-│   ├── top_module.v[m
+[31m-│   └── traffic_controller.v[m
+[31m-│[m
+[31m-├── Testbench/[m
+[31m-│   └── traffic_controller_tb.v[m
+[31m-│[m
+[31m-├── Simulation/[m
+[31m-│   └── final_traffic_controller.vcd[m
+[31m-│[m
+[31m-├── FPGA/[m
+[31m-│   ├── constraints/[m
+[31m-│   │   └── basys3.xdc[m
+[31m-│   ├── bitstream/[m
+[31m-│   │   └── traffic_controller.bit[m
+[31m-│   └── screenshots/[m
+[31m-│[m
+[31m-└── Documentation/[m
+[31m-    ├── Block_Diagram.png[m
+[31m-    ├── FSM_Diagram.png[m
+[31m-    ├── simulation_waveform.png[m
+[31m-    ├── vivado_simulation_waveform.png[m
+[31m-    ├── vivado_rtl_schematic.png[m
+[31m-    ├── vivado_synthesis_schematic.png[m
+[31m-    ├── vivado_implementation_schematic.png[m
+[31m-    └── hardware_implementation.png[m
+[31m-```[m
+[31m-[m
+[31m-*This is the intended organization. Ensure the filenames match the actual files committed to the repository.*[m
+[31m-[m
+[31m-## Running the RTL Simulation[m
+[31m-[m
+[31m-Install Icarus Verilog and GTKWave, then open a terminal in the repository root.[m
+[31m-[m
+[31m-Compile the testbench:[m
+[31m-[m
+[31m-```bash[m
+[31m-iverilog -g2012 -s traffic_controller_tb \[m
+[31m--o Simulation/final_sim \[m
+[31m-RTL/traffic_controller.v \[m
+[31m-Testbench/traffic_controller_tb.v[m
+[31m-```[m
+[31m-[m
+[31m-Run the simulation:[m
+[31m-[m
+[31m-```bash[m
+[31m-vvp Simulation/final_sim[m
+[31m-```[m
+[31m-[m
+[31m-Open the existing waveform:[m
+[31m-[m
+[31m-```bash[m
+[31m-gtkwave Simulation/final_traffic_controller.vcd[m
+[31m-```[m
+[31m-[m
+[31m-If you regenerate the simulation, ensure the testbench writes the VCD to the same path.[m
+[31m-[m
+[31m-## FPGA Build and Programming[m
+[31m-[m
+[31m-To reproduce the FPGA build:[m
+[31m-[m
+[31m-1. Open the project in AMD/Xilinx Vivado.[m
+[31m-2. Add the required Verilog source files.[m
+[31m-3. Set `top_module` as the top module.[m
+[31m-4. Add `FPGA/constraints/basys3.xdc`.[m
+[31m-5. Run RTL elaboration and synthesis.[m
+[31m-6. Run implementation and review timing and design-rule reports.[m
+[31m-7. Generate the bitstream.[m
+[31m-8. Program the Basys 3 and verify the normal traffic sequence and emergency priority behavior.[m
+[31m-[m
+[31m-The committed bitstream should correspond to the committed RTL and XDC files.[m
+[31m-[m
+[31m-## Project Status[m
+[31m-[m
+[31m-| Deliverable | Status |[m
+[31m-|---|---|[m
+[31m-| Verilog RTL design | Completed |[m
+[31m-| Testbench and simulation | Completed |[m
+[31m-| Simulation waveform | Included |[m
+[31m-| Vivado design analysis | Documented |[m
+[31m-| Basys 3 XDC constraints | Included |[m
+[31m-| FPGA bitstream | Included |[m
+[31m-| Hardware implementation | Completed |[m
+[31m-| Hardware photographs | Included when committed to `Documentation/` |[m
+[31m-| README and project documentation | Finalized |[m
+[31m-[m
+[31m-## Future Improvements[m
+[31m-[m
+[31m-- Integrate physical emergency vehicle detection sensors.[m
+[31m-- Add pedestrian crossing control.[m
+[31m-- Implement configurable timings through switches or serial communication.[m
+[31m-- Explore adaptive traffic control based on traffic density.[m
+[31m-- Evaluate further area, timing, and power optimizations.[m
+[31m-[m
+[31m-## Author[m
+[31m-[m
+[31m-**Ruturaj Vyavahare**[m
+[31m-[m
+[31m-Electronics and Telecommunication Engineering  [m
+[31m-VLSI and FPGA Design[m
+[31m-[m
+[31m-- GitHub: [RuturajVyavahare](https://github.com/RuturajVyavahare)[m
+[31m-- Project Repository: [FPGA-Based Traffic Light Controller](https://github.com/RuturajVyavahare/FPGA-Traffic-Light-Controller)[m
+[31m-[m
+[31m-## License[m
+[31m-[m
+[31m-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.[m
+[32m+[m[32mMIT License[m
+[32m+[m
+[32m+[m[32mCopyright (c) 2026 Ruturaj Vyavahare[m
+[32m+[m
+[32m+[m[32mPermission is hereby granted, free of charge, to any person obtaining a copy[m
+[32m+[m[32mof this software and associated documentation files (the "Software"), to deal[m
+[32m+[m[32min the Software without restriction, including without limitation the rights[m
+[32m+[m[32mto use, copy, modify, merge, publish, distribute, sublicense, and/or sell[m
+[32m+[m[32mcopies of the Software, and to permit persons to whom the Software is[m
+[32m+[m[32mfurnished to do so, subject to the following conditions:[m
+[32m+[m
+[32m+[m[32mThe above copyright notice and this permission notice shall be included in all[m
+[32m+[m[32mcopies or substantial portions of the Software.[m
+[32m+[m
+[32m+[m[32mTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR[m
+[32m+[m[32mIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,[m
+[32m+[m[32mFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE[m
+[32m+[m[32mAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER[m
+[32m+[m[32mLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,[m
+[32m+[m[32mOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE[m
+[32m+[m[32mSOFTWARE.[m
+\ No newline at end of file[m
